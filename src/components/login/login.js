@@ -1,5 +1,7 @@
 import React from 'react';
+import axios from "axios";
 import { Container, Form, Button, Row, Col } from 'react-bootstrap';
+// import APIHOST from "../../app.json";
 import './login.css'
 
 export default class login extends React.Component{
@@ -12,7 +14,16 @@ export default class login extends React.Component{
         };
     }
     iniciarSesion(){
-      alert (`usuario: ${this.state.usuario} - password: ${this.state.pass}`);
+      axios.post(`http://localhost:3001/usuarios/login`, {
+        usuario: this.state.usuario,
+        pass: this.state.pass,
+      })
+      .then((response) => {
+        console.log(response);
+      })
+      .catch ((err) => {
+        console.log(err);
+      });
     }
     render() { 
         return (
