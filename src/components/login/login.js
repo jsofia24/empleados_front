@@ -1,25 +1,41 @@
 import React from 'react';
 import axios from "axios";
 import { Container, Form, Button, Row, Col } from 'react-bootstrap';
-// import APIHOST from "../../app.json";
+import app from "../../app.json";
 import './login.css'
+import { isNull } from "util";
+import Cookies from "universal-cookie";
+import { calcularExpiracionSesion } from '../helper/helper';
+import Loading from '../loading/loading';
+
+const {APIHOST} = app
+const cookies = new Cookies();
 
 export default class login extends React.Component{
 
     constructor(props) {
         super(props);
         this.state = {
+          loading: false,
           usuario: '',
           pass: '',
         };
     }
     iniciarSesion(){
-      axios.post(`http://localhost:3001/usuarios/login`, {
+      this.setState({loading: true});
+      axios.post(`${APIHOST}/usuarios/login`, {
         usuario: this.state.usuario,
         pass: this.state.pass,
       })
       .then((response) => {
-        console.log(response);
+        if(isNull(response.data.token)){
+          alert("Usuario y/o contraseña inválido.")
+        }else{
+          cookies.set('_s', response.data.token, {
+            path: "/",
+            expires:  calcularExpiracionSesion(),
+          });
+        }
       })
       .catch ((err) => {
         console.log(err);
@@ -28,6 +44,7 @@ export default class login extends React.Component{
     render() { 
         return (
           <Container id="login-container">
+            <Loading show= {this.state.loading}/>
             <Row>
               <Col>
                 <Row>
