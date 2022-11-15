@@ -8,7 +8,8 @@ import Cookies from "universal-cookie";
 import { calcularExpiracionSesion } from '../helper/helper';
 import Loading from '../loading/loading';
 
-const {APIHOST} = app
+
+const {APIHOST} = app;
 const cookies = new Cookies();
 
 export default class login extends React.Component{
@@ -32,13 +33,16 @@ export default class login extends React.Component{
           alert("Usuario y/o contraseña inválido.")
         }else{
           cookies.set('_s', response.data.token, {
-            path: "/",
+            path: '/',
             expires:  calcularExpiracionSesion(),
           });
+          this.props.history.push(window.open('/empleados'));
         }
+        this.setState({loading: false});
       })
       .catch ((err) => {
         console.log(err);
+        this.setState({loading: false});
       });
     }
     render() { 
