@@ -8,8 +8,12 @@ import paginationFactory, {
 import ToolkitProvider, {
   Search,
 } from "react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit";
-import { Row, Col } from "react-bootstrap";
+import { Row, Col, Button } from "react-bootstrap";
 import { request } from "../helper/helper";
+import Loading from "../loading/loading";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEdit, faTrash} from '@fortawesome/free-solid-svg-icons';
+import { isUndefined } from "util";
 
 const { SearchBar } = Search;
 
@@ -17,21 +21,43 @@ export default class DataGrid extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      Loading: false,
       rows: [],
     };
+    if (this.props.showEditButton && !this.existsColumn('Editar'))
+    this.props.columns.push(this.getEditButton());
   }
   componentDidMount() {
     this.getData();
   }
   getData() {
+    this.setState({ loading: false});
     request
       .get(this.props.url)
       .then((response) => {
-        this.setState({rows: response.data});
+        this.setState({rows: response.data,
+        Loading: false });
       })
       .catch((error) => {
+        this.setState({ loading: false});
         console.log(error);
       });
+  }
+  existsColumn(colText){
+    let col = this.props.columns.find((column) => column.text === colText);
+    return !isUndefined(col);
+  }
+  getEditButton() {
+    return {
+      text: 'Editar',
+      formatter: (cell, row) => {
+        return (
+          <Button onClick = {() => this.props.onClickEditButton(row)}>
+            <FontAwesomeIcon icon={faEdit} />
+          </Button>
+        );
+      },
+    };
   }
   render() {
     const options = {
@@ -40,6 +66,8 @@ export default class DataGrid extends React.Component {
     };
 
     return (
+      <>
+      <Loading show={this.state.loading} />
       <ToolkitProvider
         keyField="tp"
         data={this.state.rows}
@@ -75,6 +103,7 @@ export default class DataGrid extends React.Component {
           </div>
         )}
       </ToolkitProvider>
+      </>
     );
   }
 }
