@@ -9,7 +9,7 @@ export default class EmpleadosCrear extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      redirect: false,
+      rediret: false,
       message: {
         text: "",
         show: false,
@@ -41,7 +41,7 @@ export default class EmpleadosCrear extends React.Component {
     .then ((response) => {
       if (response.data.exito){
         this.setState({
-          redirect: response.data.exito,
+          rediret: response.data.exito,
           message: {
             text: response.data.msg,
             show: true,
@@ -56,7 +56,7 @@ export default class EmpleadosCrear extends React.Component {
     });
   }
   onExitedMessage() {
-    if (this.state.redirect) this.props.changeTab( 'buscar' );
+    if (this.state.rediret) this.props.changeTab( 'buscar' );
   }
   render() {
     return (

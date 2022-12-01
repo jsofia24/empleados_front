@@ -25,7 +25,9 @@ export default class DataGrid extends React.Component {
       rows: [],
     };
     if (this.props.showEditButton && !this.existsColumn('Editar'))
-    this.props.columns.push(this.getEditButton());
+      this.props.columns.push(this.getEditButton());
+    if (this.props.showDeleteButton && !this.existsColumn('Eliminar'))
+      this.props.columns.push(this.getDeleteButton());
   }
   componentDidMount() {
     this.getData();
@@ -58,6 +60,18 @@ export default class DataGrid extends React.Component {
         );
       },
     };
+  }
+  getDeleteButton() {
+    return {
+      text: "Eliminar",
+      formatter: (cell, row) => {
+        return (
+          <Button onClick={() => this.props.onClickDeleteButton(row)}>
+            <FontAwesomeIcon icon={ faTrash}/>
+          </Button>
+        );
+      },
+    }
   }
   render() {
     const options = {
